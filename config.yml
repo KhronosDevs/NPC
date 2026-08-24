@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# NPC plugin configuration
+#
+# Every toggleable behaviour of the plugin lives here. Values marked
+# (dynamic) are re-read from the in-memory config object; the rest are read
+# once at startup and require a restart (or /npc reload) to apply.
+#
+# NOTE ON STORAGE: NPCs are stored BY THE WORLD. Spawned entities are
+# tagged persistent, so the server's chunk data saves/restores them across
+# unloads and restarts - there is no plugin-side database to configure.
+# ---------------------------------------------------------------------------
+
+enabled: true
+
+debug: false
+
+# --- Interaction -----------------------------------------------------------
+interaction:
+  # Master switch: when false, right-clicking NPCs does nothing.
+  enabled: true
+  # Minimum delay between two interactions with ANY NPC by the same player,
+  # in ticks (20 ticks = 1 second). Prevents action spam.
+  cooldown-ticks: 10
+  # Show the interaction result feedback ("action performed") to the player.
+  feedback-messages: true
+
+# --- NPC behaviour ---------------------------------------------------------
+npcs:
+  # NPCs cannot be damaged/killed by players or the environment.
+  invulnerable: true
+  # Default model used for new NPCs when none is given. Must be a valid
+  # entity type name (Villager, Zombie, Pig, ...). The model decides what the
+  # client renders - protocol 84 has no player-form NPC rendering, so a
+  # humanoid mob model (Villager) is the closest to a classic NPC.
+  default-model: Villager
+  # Default scale for new NPCs (0.5 = half size, 2.0 = double). Requires the
+  # client's DATA_SCALE support (MCPE 0.15+); values outside 0.1..10 are clamped.
+  default-scale: 1.0
+
+# --- Dialogs ---------------------------------------------------------------
+dialog:
+  # Master switch for the "dialog" action type (timed popup menu).
+  enabled: true
+  # How long the dialog popup stays on screen, in seconds.
+  duration-seconds: 5

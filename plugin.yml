@@ -1,0 +1,10 @@
+name: NPC
+version: 1.0.0
+author: Khronos
+description: Static, persistent NPCs with custom nametags, scale and configurable interaction actions
+main: khronos\npc\Main
+api: 2.0.0
+permissions:
+  npc.admin:
+    description: Manage NPCs (spawn, remove, move, edit actions)
+    default: op

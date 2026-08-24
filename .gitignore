@@ -1,0 +1,4 @@
+.git/
+*.phar
+vendor/
+npcs.sqlite*
