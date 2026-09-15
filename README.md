@@ -67,7 +67,7 @@ src/khronos/npc/
         ├── NpcSkinListInjector.php        lazy PlayerListPacket entries for
         │                                  Human NPCs (via sendPacketTo),
         │                                  MoveEntity -> MovePlayer conversion
-        ├── InteractionListener.php        right-click routing, damage guard
+        ├── InteractionListener.php        attack/right-click routing, damage guard
         └── ChunkLifecycleListener.php     chunk load/unload -> materializer
 ```
 

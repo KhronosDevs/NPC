@@ -16,7 +16,8 @@ debug: false
 
 # --- Interaction -----------------------------------------------------------
 interaction:
-  # Master switch: when false, right-clicking NPCs does nothing.
+  # Master switch: when false, tapping (attacking) or right-clicking
+  # NPCs does nothing.
   enabled: true
   # Minimum delay between two interactions with ANY NPC by the same player,
   # in ticks (20 ticks = 1 second). Prevents action spam.

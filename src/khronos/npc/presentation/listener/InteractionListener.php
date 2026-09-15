@@ -13,10 +13,12 @@ use pocketmine\api\event\PlayerInteractEvent;
 /**
  * Translates runtime interaction/damage callbacks into application calls.
  *
- * Right-click on an NPC: cancels the event (so the server's default
- * entity-type dispatch never runs) and routes it to HandleInteractionUseCase.
- * Damage against an NPC: cancelled while npcs.invulnerable is on (NPCs have
- * no HealthComponent anyway, so most damage paths already ignore them).
+ * Attack (left-click / mobile tap) on an NPC: cancels the event (so the
+ * server's damage pipeline never runs on the NPC) and routes it to
+ * HandleInteractionUseCase. Right-click is accepted as an alternate
+ * trigger for desktop players. Damage against an NPC: cancelled while
+ * npcs.invulnerable is on (NPCs have no HealthComponent anyway, so most
+ * damage paths already ignore them).
  */
 final class InteractionListener {
     public function __construct(
@@ -35,22 +37,26 @@ final class InteractionListener {
             return;
         }
 
-        // The core fires this event before its own reach validation, so
-        // enforce the same 3-block range here (matching the server's own
-        // canInteract): out-of-range clicks fall through uncancelled.
-        if (!$this->withinReach($event->getPlayer()->getInternalRef(), $targetRef)) {
+        // NPCs swallow both click types: attacking an NPC runs its actions,
+        // right-click is cancelled too so the server's default entity
+        // dispatch (villager trading, saddling, ...) never runs.
+        $event->setCancelled(true);
+
+        // Actions trigger on ATTACK (left-click), not right-click: mobile
+        // players interact with entities by tapping, which the client sends
+        // as an attack (InteractPacket ACTION_LEFT_CLICK) - there is no
+        // right-click gesture on touch. RIGHT_CLICK_ENTITY stays accepted as
+        // an alternate trigger for desktop players.
+        if ($event->getAction() !== PlayerInteractEvent::LEFT_CLICK_ENTITY
+            && $event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_ENTITY) {
             return;
         }
 
-        // NPCs swallow both click types: right-click runs actions,
-        // left-click does nothing (no hurt animation, no knockback).
-        $event->setCancelled(true);
-
-        // The core's Blocker-4 fix relabels entity right-clicks as
-        // RIGHT_CLICK_ENTITY (they were RIGHT_CLICK_BLOCK before); accept
-        // both so the plugin works against either core version.
-        if ($event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_ENTITY
-            && $event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+        // The core fires this event before its own reach validation, so
+        // enforce the same 3-block range here (matching the server's own
+        // canInteract/canAttack): keeps a range hack from triggering NPC
+        // actions through the event-fired-early window.
+        if (!$this->withinReach($event->getPlayer()->getInternalRef(), $targetRef)) {
             return;
         }
 
