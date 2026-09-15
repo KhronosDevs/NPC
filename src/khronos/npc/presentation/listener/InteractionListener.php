@@ -46,7 +46,11 @@ final class InteractionListener {
         // left-click does nothing (no hurt animation, no knockback).
         $event->setCancelled(true);
 
-        if ($event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+        // The core's Blocker-4 fix relabels entity right-clicks as
+        // RIGHT_CLICK_ENTITY (they were RIGHT_CLICK_BLOCK before); accept
+        // both so the plugin works against either core version.
+        if ($event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_ENTITY
+            && $event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
             return;
         }
 
